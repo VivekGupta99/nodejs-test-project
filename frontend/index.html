@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Company Reviews</title>
+    <!-- <link href="style.css" rel="stylesheet" type="text/css" /> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+
+<body>
+    <!-- Image and text -->
+    <nav class="navbar navbar-light bg-light">
+        <!-- <a class="navbar-brand" href="#"> -->
+        <!-- <img src="https://play.google.com/store/apps/details?id=com.nightonke.inc&hl=en_US" width="30" height="30" class="d-inline-block align-top" alt=""> -->
+        <h1>Nodejs-Test_Project</h1>
+    </nav>
+
+    <div class="container">
+        <form>
+            <div class="form-group">
+                <label for="title">Company Name: </label>
+                <!-- <input type="number" class="form-control" id="name" aria-describedby="emailHelp"> -->
+                <input type="text" class="form-control" id="companyName">
+            </div>
+
+            <div class="form-group">
+                <label for="">Pros:</label>
+                <textarea class="form-control" name="test" id="pros" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="desc">Cons:</label>
+                <textarea class="form-control" name="test" id="cons" rows="2"></textarea>
+            </div>
+
+            <label for="rating">Rating:</label><br>
+            <select id="rating" name="rating" required>
+                <option value="1">★</option>
+                <option value="2">★★</option>
+                <option value="3">★★★</option>
+                <option value="4">★★★★</option>
+                <option value="5">★★★★★</option>
+            </select><br><br>
+            <button id="submit" type="submit" class="btn btn-primary">Submit Review</button>
+
+        </form>
+        <hr>
+
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" id="cName" type="search" placeholder="Search Company"
+                aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="companyDetail">Search</button>
+        </form>
+        <div id="data">
+            <div id="inDiv">
+
+            </div>
+        </div>
+    </div>
+    <script>
+
+
+        const data = document.getElementById('data')
+        const insideDivData = document.getElementById('inDiv');
+
+        submit.addEventListener('click', (e) => {
+
+            e.preventDefault();
+            const companyName = document.getElementById('companyName').value;
+            const pros = document.getElementById('pros').value;
+            const cons = document.getElementById('cons').value;
+            const rating = document.getElementById('rating').value;
+
+            config = {
+                method: 'POST',
+                url: 'http://localhost:4000/companies',
+                data: { companyName, pros, cons, rating }
+            }
+
+            axios(config)
+                .then(res => {
+                    console.log("POST response:");
+                    // console.log(res.data);
+                }).catch(err => {
+                    console.log('POST error  :  ', err);
+                })
+        });
+
+        const btn = document.getElementById('companyDetail');
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            const cName = document.getElementById('cName').value;
+            config = {
+                method: 'POST',
+                url: 'http://localhost:4000/companies/new',
+                data: { companyName: cName }
+            }
+
+            axios(config)
+                .then(res => {
+                    console.log("POST response2:");
+                    console.log("resData : ", res.data);
+                    let count = 0;
+                    let oRataing = 0;
+                    res.data.forEach(element => {
+                        count++;
+                        oRataing += element.rating;
+                    });
+                    let nRating = (oRataing / count).toFixed(2);
+
+
+                    data.innerHTML += `
+                        <h4>Company Name: '${res.data[0].companyName}'</h4>
+                        <h4>Overall Rating: '${nRating}'</h4>
+                    `
+                    res.data.forEach(element => {
+                        data.innerHTML += `
+                    <div id='${element.id}'>
+                    <div>pros: ${element.pros}</div>
+                    <div>cons: ${element.cons}</div>
+                    <div>rating: ${element.rating}</div>
+                    </div><br> <hr>`
+
+                        //     data.innerHTML += `
+                        // <div id='${element.id}'>
+                        // <div>pros: ${element.pros}</div>
+                        // <div>cons: ${element.cons}</div>
+                        // <div>rating: ${element.rating}</div>
+                        // </div><br> <hr>`
+                    });
+                }).catch(err => {
+                    console.log('POST error 2 :  ', err);
+                })
+
+
+        })
+
+
+
+    </script>
+</body>
+
+</html>
