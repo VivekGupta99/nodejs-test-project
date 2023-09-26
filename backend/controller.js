@@ -27,7 +27,7 @@ function addCompany(req, res) {
 async function ratingData(req, res) {
     if (!req.body) {
         return res.status(400).send({
-            message: "Nothing to search"
+            message: "Nothing to search"    
         })
     }
 
